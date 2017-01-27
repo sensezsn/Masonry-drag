@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .box {
+            width: 500px;
+            height: 2000px;
+            float: left;
+            border: 1px dotted #2aabd2;
+        }
+
+        .right {
+            float: right;
+            /*position: relative;*/
+        }
+
+        .right > div {
+            /*position: absolute;*/
+        }
+
+        .right > img {
+            /*position: absolute;*/
+        }
+
+        img {
+            width: 150px;
+            transition: all 0.5s;
+
+        }
+
+        .div {
+            width: 150px;
+            height: 150px;
+            display: inline-block;
+            transition: all 0.5s;
+
+        }
+
+        .div1 {
+            background: red;
+        }
+
+        .div2 {
+            background: yellowgreen;
+
+        }
+
+        .div3 {
+            background: deeppink;
+        }
+
+        .div4 {
+            background: greenyellow;
+        }
+
+        .div5 {
+            background: #2aabd2;
+        }
+    </style>
+</head>
+<body>
+<!--
+    拖拽
+    drag:只要拖动就会触发，所以一般不使用
+    dragstart:拖动开始是触发，添加到要拖动元素的父元素left上(原理:事件委托)，
+    dargover:移动时触发,因为浏览器默认不允许拖动元素（注意鼠标的图标变化），所以要手动禁止默认事件
+                默认事件就添加到有dragover事件的元素上，因为这里是允许在右边添加元素
+                或者滑动元素，所以是right.ondragover
+                经过谁就给谁绑定
+    dragend:拖拽结束时触发
+    drop:砸在谁上边，就把该事件添加到谁上
+
+
+    注意：
+        1 浏览器默认不允许移动元素，所以要禁止此行为，在dragover事件中禁止此行为
+        2 img元素可以拖动，但是有些元素不可以拖动，所以要加上一个属性 draggable="true";
+
+-->
+<div class="box left" id="left_div" draggable="false">
+    <img src="img/1.jpg"/>
+    <img src="img/2.jpg"/>
+    <img src="img/3.jpg"/>
+    <img src="img/4.jpg"/>
+    <!--<div class="div1 div" draggable="true"></div>-->
+    <!--<div class="div2 div" draggable="true"></div>-->
+    <!--<div class="div3 div" draggable="true"></div>-->
+    <!--<div class="div4 div" draggable="true"></div>-->
+    <!--<div class="div5 div" draggable="true"></div>-->
+    <!--<div class="div1 div" draggable="true"></div>-->
+    <!--<div class="div2 div" draggable="true"></div>-->
+    <!--<div class="div3 div" draggable="true"></div>-->
+    <!--<div class="div4 div" draggable="true"></div>-->
+    <!--<div class="div5 div" draggable="true"></div>-->
+    <!--<div class="div1 div" draggable="true"></div>-->
+    <!--<div class="div2 div" draggable="true"></div>-->
+    <!--<div class="div3 div" draggable="true"></div>-->
+    <!--<div class="div4 div" draggable="true"></div>-->
+    <!--<div class="div5 div" draggable="true"></div>-->
+    <!--<div class="div1 div" draggable="true"></div>-->
+    <!--<div class="div2 div" draggable="true"></div>-->
+    <!--<div class="div3 div" draggable="true"></div>-->
+    <!--<div class="div4 div" draggable="true"></div>-->
+    <!--<div class="div5 div" draggable="true"></div>-->
+    <img src="img/5.jpg"/>
+    <img src="img/6.jpg"/>
+    <img src="img/7.jpg"/>
+    <img src="img/8.jpg"/>
+    <img src="img/9.jpg"/>
+    <img src="img/10.jpg"/>
+
+    <img src="img/11.jpg"/>
+    <img src="img/12.jpg"/>
+    <img src="img/13.jpg"/>
+    <img src="img/14.jpg"/>
+    <img src="img/15.jpg"/>
+    <img src="img/16.jpg"/>
+    <img src="img/17.jpg"/>
+    <img src="img/18.jpg"/>
+    <img src="img/19.gif"/>
+    <img src="img/20.jpg"/>
+</div>
+<div class="box right" id="right_div"></div>
+</body>
+<script src="速度动画/script.js"></script>
+<!--<script src="jquery.js"></script>-->
+<script src="Masonry1.js"></script>
+<script>
+    window.onload = function () {
+        var left = document.getElementById("left_div");
+        var right = document.getElementById("right_div");
+        //dNum  代表哪一列  dNum2代表哪一行
+        //x1 x2 代表鼠标点击图片时 在图片中的相对坐标
+        //mLeft mRight表示 创建的左右两边的瀑布流对象
+        var oimg, x1, y1, mLeft, mRight, dNum, dNum2;
+
+//    左边瀑布流排列
+        jiazai();
+
+//    ---------------------------------------------右边
+        mRight = new Masonry(right,
+                {
+                    imgWidth: 150,
+                    imgLeft: 20,
+                    imgTop: 10
+                }
+        );
+        left.ondragstart = function (e) {
+            var e = e || window.event;
+            oimg = e.target || e.srcElement;
+            x1 = e.clientX - oimg.offsetLeft;
+            y1 = e.clientY - oimg.offsetTop;
+            dNum = oimg.dataset.num;
+            dNum2 = oimg.dataset.num2;
+
+
+        };
+        right.ondragover = function (e) {
+            stopPrevent(e);
+        };
+        right.ondrop = function (e) {
+
+//            var e = e || window.event;
+//            if (oimg.parentNode == this) {
+//                return;
+//            }
+//
+//            var x = e.clientX - x1;
+//            var y = e.clientY - y1;
+//
+//            mRight.appendElem(oimg, 0, x, y);
+//            mLeft.changeHeight(oimg, 1, dNum);
+//
+//            for (var i = 0; i < left.children.length; i++) {
+//                if (left.children[i].dataset.num == dNum && Number(left.children[i].dataset.num2) > Number(dNum2)) {
+//                    left.children[i].style.top = left.children[i].offsetTop - (oimg.offsetHeight + 10) + "px";
+//                    left.children[i].setAttribute("data-num2", left.children[i].dataset.num2 - 1);
+//                }
+//            }
+//            oimg = null;
+            var that = this;
+            myDrop(e, mRight, mLeft, left, that);
+        };
+//  ----------------------------左边
+
+        right.ondragstart = function (e) {
+            var e = e || window.event;
+            oimg = e.target || e.srcElement;
+            x1 = e.clientX - oimg.offsetLeft - oimg.parentNode.offsetLeft;
+            y1 = e.clientY - oimg.offsetTop - oimg.parentNode.offsetTop;
+            dNum = oimg.dataset.num;
+            dNum2 = oimg.dataset.num2;
+        };
+        left.ondragover = function (e) {
+            stopPrevent(e);
+        };
+        left.ondrop = function (e) {
+            var that = this;
+            myDrop(e, mLeft, mRight, right, that);
+//            var e = e || window.event;
+//
+//            if (oimg.parentNode == this) {
+//                return;
+//            }
+//
+//            var x = e.clientX - x1;
+//            var y = e.clientY - y1;
+//
+//            mLeft.appendElem(oimg, 1, x, y);
+//            mRight.changeHeight(oimg, 0, dNum);
+//
+//            for (var i = 0; i < right.children.length; i++) {
+//
+//                if (right.children[i].dataset.num == dNum && Number(right.children[i].dataset.num2) > Number(dNum2)) {
+//                    right.children[i].style.top = right.children[i].offsetTop - (oimg.offsetHeight + 10) + "px";
+//                    right.children[i].setAttribute("data-num2", right.children[i].dataset.num2 - 1);
+//                }
+//            }
+//            oimg = null;
+        };
+
+
+        /**
+         *
+         * @param e 传递的事件对象
+         * @param m1 表示左右两边创建的瀑布流对象mLeft mRight
+         * @param m2 表示左右两边创建的瀑布流对象mLeft mRight
+         * @param obj right 或left 左右两边的DOM对象
+         * @param that 表示this
+         */
+        function myDrop(e, m1, m2, obj, that) {
+            var e = e || window.event;
+            if (oimg.parentNode == that) {
+                return;
+            }
+
+            var x = e.clientX - x1;
+            var y = e.clientY - y1;
+
+            if (that == left) {
+                m1.appendElem(oimg, 1, x, y);
+                m2.changeHeight(oimg, 0, dNum);
+            } else {
+                m1.appendElem(oimg, 0, x, y);
+                m2.changeHeight(oimg, 1, dNum);
+            }
+
+            for (var i = 0; i < obj.children.length; i++) {
+
+                if (obj.children[i].dataset.num == dNum && Number(obj.children[i].dataset.num2) > Number(dNum2)) {
+                    obj.children[i].style.top = obj.children[i].offsetTop - (oimg.offsetHeight + 10) + "px";
+                    obj.children[i].setAttribute("data-num2", obj.children[i].dataset.num2 - 1);
+                }
+            }
+            oimg = null;
+        }
+
+        function jiazai() {
+            mLeft = new Masonry(left,
+                    {
+                        clos: 3,
+                        imgWidth: 150,
+                        imgLeft: 20,
+                        imgTop: 10
+                    }
+            );
+            var num = 0;//用来判断left瀑布流排列停止
+            for (var i = 0; i < left.children.length; i++) {
+                mLeft.appendElem(left.children[0], 1);
+                i--;
+                num++;
+                if (num == left.children.length) {
+                    break;
+                }
+            }
+        }
+
+        /**
+         * 阻止默认图片不允许拖动事件  （鼠标是禁止图标）
+         * @param e 传递的event对象
+         */
+        function stopPrevent(e) {
+            var e = e || window.event;
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                e.returnValue = "true";
+            }
+        }
+    }
+
+</script>
+</html>
